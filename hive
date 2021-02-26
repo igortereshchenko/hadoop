@@ -1,0 +1,14 @@
+create view topmovies as
+select movie_id, count(movie_id) as rating_count
+from ratings
+group by movie_id;
+
+
+select
+    movie_info.movie_name,
+
+    topmovies.movie_id,
+    topmovies.rating_count
+from topmovies
+ join movie_info
+ on movie_info.movie_id = topmovies.movie_id;
