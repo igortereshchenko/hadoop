@@ -12,3 +12,16 @@ select
 from topmovies
  join movie_info
  on movie_info.movie_id = topmovies.movie_id;
+
+
+select
+	movie_info.movie_name,
+
+	topmovies.movie_id,
+	topmovies.rating_count as rating_count
+
+from topmovies
+ join movie_info on movie_info.movie_id = topmovies.movie_id
+
+where rating_count>30
+order by rating_count desc;
