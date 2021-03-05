@@ -1,0 +1,44 @@
+[maria_dev@sandbox-hdp ~]$ sudo systemctl stop mysqld
+[maria_dev@sandbox-hdp ~]$ sudo systemctl set-environment MYSQLD_OPTS='--skip-grant-tables --skip-networking'
+[maria_dev@sandbox-hdp ~]$ sudo systemctl start mysqld
+[maria_dev@sandbox-hdp ~]$ mysql -uroot
+
+
+mysql> flush privileges;
+mysql> alter user 'root'@'localhost' identified by 'hadoop';
+mysql> flush privileges;
+
+[maria_dev@sandbox-hdp ~]$ sudo systemctl unset-environment MYSQLD_OPTS;
+[maria_dev@sandbox-hdp ~]$ sudo systemctl restart mysqld
+[maria_dev@sandbox-hdp ~]$ mysql -uroot -phadoop
+
+mysql> create database movielens;
+
+mysql> exit
+Bye
+[maria_dev@sandbox-hdp ~]$ wget http://media.sundog-soft.com/hadoop/movielens.sql
+
+
+mysql> set names 'utf8';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> set character set utf8;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> use movielens;
+Database changed
+mysql> source movielens.sql;
+
+
+SQOOP integration
+
+grant all privileges on movielens.* to 'root'@'localhost';
+to file
+sqoop import --connect 'jdbc:mysql://localhost/movielens?user=root&password=hadoop' -driver com.mysql.jdbc.Driver --table movies -m 1
+to hive
+sqoop import --connect 'jdbc:mysql://localhost/movielens?user=root&password=hadoop' -driver com.mysql.jdbc.Driver --query "select * from movielens.movies where movieid>100 limit 10;" -m 1 --target-dir /hdfs/user/maria_dev/
+
+sqoop import --connect 'jdbc:mysql://localhost/movielens?user=root&password=hadoop' -driver com.mysql.jdbc.Driver --table movies --hive import -m 1
+
+
+sqoop import --connect jdbc:mysql://localhost/movielens --username root --password hadoop  --table movies --target-dir /user/maria_dev/import_movies2 --fields-terminated-by ',' --hive-import --create-hive-table --hive-table default.import_movies2

@@ -13,7 +13,7 @@ def load_movies_names():
 # for Hadoop
 def load_movies_names(line):
     fields = line.split('|')
-    return (  int(fields[1]),  ( float(fields[2]), 1  )  )
+    return (  int(fields[1]),  ( float(fields[2]), 1 )  )
 
 # movie_id =1  rating =7.1  count_of_data 1
 # movie_id =1  rating =2.1  count_of_data 1 =>    movie_id=1 sum_rating = 9.1 count_of_data=2
